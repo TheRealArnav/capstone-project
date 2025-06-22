@@ -22,38 +22,55 @@ class Slider(pygame.sprite.Sprite):
     def draw(self):
         screen.blit(self.image,(self.x,410))
     def right(self):
-        self.x = self.x - self.speed
-    def left(self):
         self.x = self.x + self.speed
+    def left(self):
+        self.x = self.x - self.speed
 
  
 class astronauts(pygame.sprite.Sprite):
-    def __init__(self,x):
+    def __init__(self,x,y):
         super().__init__()
         self.x = x
-        self.image == pygame.image.load("C:/Pygame2/images/astronaut.png")
+        self.y = y
+        self.image = pygame.image.load("C:/Pygame2/images/astronaut.png")
         self.rect = self.image.get_rect()
     def draw(self):
         screen.blit(self.image,(self.x,500))
+    def update(self):
+        self.rect.y = self.rect.y + 10
+
         
 
 
 slider = Slider(0)
 run = True
 
-
 astronautgroup = pygame.sprite.Group()
 
+for i in range(20):
+    astronaut = astronauts(0,0)
+    astronaut.rect.x = random.randint(0,500)
+    astronaut.rect.y = 0
+    
+    astronautgroup.add(astronaut)
+
+
+bg = pygame.image.load("C:/Pygame2/images/spacebg3.png")
+
 while run:
+    screen.blit(bg,(0,0))
+    clock.tick(60)
+    
+
     txt = font.render("Score:  "+str(score), True, "white")
     screen.blit(txt,(0,0))
-    clock.tick(60)
-    for i in range(20):
-        astronaut = astronauts(random.randint(0,500))
-        astronaut.draw()
-        astronaut.x = astronaut.x - 10
-        astronautgroup.add(astronaut)
-
+    
+    
+    
+    astronautgroup.update()
+    pygame.display.update()
+        
+    astronautgroup.draw(screen)
 
     for astronaut in astronautgroup:
         if astronaut.rect.colliderect(slider.rect):
@@ -61,19 +78,19 @@ while run:
             score = score + 1
 
         
-
+    key  = pygame.key.get_pressed()
+    if key[pygame.K_LEFT]:
+        slider.left()
+        pygame.display.update()
+    if key[pygame.K_RIGHT]:
+        slider.right()
+        pygame.display.update()
 
 
     slider.draw()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-        if event.type == pygame.key.get_pressed():
-            if event.key == pygame.K_LEFT:
-                slider.left()
-                pygame.display.update()
-            if event.key == pygame.K_RIGHT:
-                slider.right()
-                pygame.display.update()
+        
 
     pygame.display.update()
